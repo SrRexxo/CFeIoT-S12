@@ -95,3 +95,5 @@ else:
 st.subheader("Giroscopio")
 if not gyr_df.empty:
     st.plotly_chart(px.line(gyr_df, x="time", y="gyroscope", title="giroscpio"), use_container_width=True)
+else:
+    st.info("Sin datos del giroscopio en este rango.")
