@@ -91,3 +91,7 @@ if not mov_df.empty:
     st.plotly_chart(px.line(mov_df, x="time", y="accel_magnitude", title="Movimiento"), use_container_width=True)
 else:
     st.info("Sin datos de movimiento en este rango.")
+
+st.subheader("Giroscopio")
+if not gyr_df.empty:
+    st.plotly_chart(px.line(gyr_df, x="time", y="gyroscope", title="giroscpio"), use_container_width=True)
