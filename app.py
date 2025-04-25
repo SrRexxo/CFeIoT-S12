@@ -67,6 +67,7 @@ range_minutes = st.slider("Selecciona el rango de tiempo (en minutos):", 10, 180
 temp_df = query_data("airSensor", "temperature", range_minutes)
 hum_df = query_data("airSensor", "humidity", range_minutes)
 mov_df = query_accelerometer_data(range_minutes)
+gyr_df= query_data("airSensor", "gyroscope", range_minutes)
 
 # Visualización
 col1, col2 = st.columns(2)
