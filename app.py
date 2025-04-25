@@ -129,6 +129,7 @@ def get_plant_state(hum_df):
         return "neutra", "🌥️", "Sin datos de humedad."
 
     last_value = hum_df["humidity"].iloc[-1]
+    last_value= 20
 
     if last_value > 60:
         return "feliz", "🌞", f"Humedad alta ({last_value:.1f}%) — la planta está feliz."
