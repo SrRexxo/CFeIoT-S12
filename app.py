@@ -1,6 +1,7 @@
 import streamlit as st
 from influxdb_client import InfluxDBClient
 import pandas as pd
+import streamlit.components.v1 as components
 import plotly.express as px
 import numpy as np
 
@@ -135,4 +136,64 @@ def get_plant_state(hum_df):
         return "triste", "🌧️", f"Humedad baja ({last_value:.1f}%) — la planta está triste."
     else:
         return "neutra", "🌥️", f"Humedad moderada ({last_value:.1f}%) — la planta está normal."
+
+# Obtener el estado actual de la planta
+estado, emoji, mensaje = get_plant_state(hum_df)
+
+# Mostrar mensaje de estado
+st.subheader(f"Estado de la Planta: {emoji}")
+st.markdown(mensaje)
+
+# HTML animado para cada estado
+html_animaciones = {
+    "feliz": """
+        <div style="text-align:center;">
+            <div style="width:160px;height:160px;margin:auto;border-radius:50%;background: radial-gradient(circle at 30% 30%, #f9d423, #ff4e50); animation: pulse 2s infinite;">
+                <div style="font-size:80px;line-height:160px;">🌼</div>
+            </div>
+            <p style="font-size:20px;">¡Estoy feliz y brillante!</p>
+        </div>
+        <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        </style>
+    """,
+    "triste": """
+        <div style="text-align:center;">
+            <div style="width:160px;height:160px;margin:auto;border-radius:50%;background: linear-gradient(to bottom, #89f7fe, #66a6ff); animation: rain 1.2s infinite;">
+                <div style="font-size:80px;line-height:160px;">💧</div>
+            </div>
+            <p style="font-size:20px;">Me siento seca... 😢</p>
+        </div>
+        <style>
+        @keyframes rain {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(6px); }
+            100% { transform: translateY(0px); }
+        }
+        </style>
+    """,
+    "neutra": """
+        <div style="text-align:center;">
+            <div style="width:160px;height:160px;margin:auto;border-radius:50%;background: radial-gradient(circle at center, #c9d6ff, #e2e2e2); animation: float 3s ease-in-out infinite;">
+                <div style="font-size:80px;line-height:160px;">🍃</div>
+            </div>
+            <p style="font-size:20px;">Estoy tranquila 🌥️</p>
+        </div>
+        <style>
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        </style>
+    """
+}
+
+# Renderizar animación basada en estado
+components.html(html_animaciones[estado], height=300)
+
 
