@@ -37,11 +37,9 @@ def query_uv_data(range_minutes=60):
 
     query = f'''
     from(bucket: "homeiot")
-      |> range(start: -{range_minutes}m)
+      |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
       |> filter(fn: (r) => r._measurement == "uv_sensor")
       |> filter(fn: (r) => r._field == "uv_index" or r._field == "uv_raw")
-      |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-      |> sort(columns: ["_time"])
     '''
 
     result = query_api.query_data_frame(query)
