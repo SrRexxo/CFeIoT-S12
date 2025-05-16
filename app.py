@@ -106,13 +106,19 @@ with col2:
 with col3:
     st.subheader("🌞 Índice UV")
     if "uv_index" in uv_df.columns and not uv_df.empty:
-        avg_uv = uv_df["uv_index"].mean()
-        max_uv = uv_df["uv_index"].max()
-        min_uv = uv_df["uv_index"].min()
-        st.write(f"Promedio: {avg_uv:.2f}")
-        st.write(f"Máximo: {max_uv:.2f}")
-        st.write(f"Mínimo: {min_uv:.2f}")
-        st.plotly_chart(px.line(uv_df, x="time", y="uv_index", title="Índice UV"), use_container_width=True)
+        uv_df["uv_index"] = pd.to_numeric(uv_df["uv_index"], errors="coerce")
+        uv_df = uv_df.dropna(subset=["uv_index"])
+
+        if not uv_df.empty:
+            avg_uv = uv_df["uv_index"].mean()
+            max_uv = uv_df["uv_index"].max()
+            min_uv = uv_df["uv_index"].min()
+            st.write(f"Promedio: {avg_uv:.2f}")
+            st.write(f"Máximo: {max_uv:.2f}")
+            st.write(f"Mínimo: {min_uv:.2f}")
+            st.plotly_chart(px.line(uv_df, x="time", y="uv_index", title="Índice UV"), use_container_width=True)
+        else:
+            st.info("No hay datos válidos de índice UV en este rango.")
     else:
         st.info("Sin datos de índice UV en este rango.")
 
@@ -135,4 +141,3 @@ if "uv_index" in uv_df.columns and not uv_df.empty:
         st.warning("La radiación UV es moderada. Considera medidas preventivas para evitar daños.")
     else:
         st.success("La radiación UV está en niveles seguros.")
-
