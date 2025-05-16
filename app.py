@@ -56,7 +56,7 @@ st.set_page_config(page_title="Monitoreo Ambiental", layout="wide")
 st.title("Monitoreo Ambiental en Tiempo Real")
 
 # Selector de tiempo
-range_minutes = st.slider("Selecciona el rango de tiempo (en minutos):", 10, 360, 60)
+range_minutes = st.slider("Selecciona el rango de tiempo (en minutos):", 10, 360, 180)
 
 # Consultar datos
 fields = ["temperature", "humidity"]
@@ -64,11 +64,28 @@ data_df = query_sensor_data(fields, range_minutes)
 uv_df = query_uv_data(range_minutes)
 
 # Visualización
+st.subheader("📊 Datos Crudos")
+if not data_df.empty:
+    st.write("### Temperatura y Humedad", data_df)
+else:
+    st.info("No hay datos crudos disponibles para temperatura y humedad.")
+
+if not uv_df.empty:
+    st.write("### Índice UV", uv_df)
+else:
+    st.info("No hay datos crudos disponibles para índice UV.")
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.subheader("🌡️ Temperatura (°C)")
     if "temperature" in data_df.columns and not data_df.empty:
+        avg_temp = data_df["temperature"].mean()
+        max_temp = data_df["temperature"].max()
+        min_temp = data_df["temperature"].min()
+        st.write(f"Promedio: {avg_temp:.2f} °C")
+        st.write(f"Máximo: {max_temp:.2f} °C")
+        st.write(f"Mínimo: {min_temp:.2f} °C")
         st.plotly_chart(px.line(data_df, x="time", y="temperature", title="Temperatura"), use_container_width=True)
     else:
         st.info("Sin datos de temperatura en este rango.")
@@ -76,6 +93,12 @@ with col1:
 with col2:
     st.subheader("💧 Humedad (%)")
     if "humidity" in data_df.columns and not data_df.empty:
+        avg_hum = data_df["humidity"].mean()
+        max_hum = data_df["humidity"].max()
+        min_hum = data_df["humidity"].min()
+        st.write(f"Promedio: {avg_hum:.2f} %")
+        st.write(f"Máximo: {max_hum:.2f} %")
+        st.write(f"Mínimo: {min_hum:.2f} %")
         st.plotly_chart(px.line(data_df, x="time", y="humidity", title="Humedad"), use_container_width=True)
     else:
         st.info("Sin datos de humedad en este rango.")
@@ -83,17 +106,33 @@ with col2:
 with col3:
     st.subheader("🌞 Índice UV")
     if "uv_index" in uv_df.columns and not uv_df.empty:
+        avg_uv = uv_df["uv_index"].mean()
+        max_uv = uv_df["uv_index"].max()
+        min_uv = uv_df["uv_index"].min()
+        st.write(f"Promedio: {avg_uv:.2f}")
+        st.write(f"Máximo: {max_uv:.2f}")
+        st.write(f"Mínimo: {min_uv:.2f}")
         st.plotly_chart(px.line(uv_df, x="time", y="uv_index", title="Índice UV"), use_container_width=True)
     else:
         st.info("Sin datos de índice UV en este rango.")
 
-st.title("Dashboard IoT del Clima")
+# Recomendaciones automatizadas
+st.subheader("🌱 Recomendaciones para el cuidado de microcultivos")
+if "humidity" in data_df.columns and not data_df.empty:
+    last_humidity = data_df["humidity"].iloc[-1]
+    if last_humidity < 30:
+        st.warning("La humedad está por debajo del umbral recomendado. Se sugiere regar los cultivos.")
+    elif last_humidity > 60:
+        st.success("La humedad está en un rango óptimo para los cultivos.")
+    else:
+        st.info("La humedad es moderada. Monitorea para mantenerla estable.")
 
-st.markdown(
-    """
-    ### Ver panel de clima
-    Debido a políticas de seguridad, el panel no puede mostrarse aquí directamente.
-    [Haz clic aquí para abrir el panel en una nueva pestaña.](https://miguelcmo.grafana.net/d-solo/aehqn58kr54aof/home-iot-weather-conditions?orgId=1&from=1747328396681&to=1747349996681&timezone=browser&refresh=10s&panelId=3&__feature.dashboardSceneSolo)
-    """,
-    unsafe_allow_html=True
-)
+if "uv_index" in uv_df.columns and not uv_df.empty:
+    last_uv = uv_df["uv_index"].iloc[-1]
+    if last_uv > 8:
+        st.error("La radiación UV es alta. Se recomienda proteger los cultivos con sombra o cobertores.")
+    elif last_uv > 5:
+        st.warning("La radiación UV es moderada. Considera medidas preventivas para evitar daños.")
+    else:
+        st.success("La radiación UV está en niveles seguros.")
+
