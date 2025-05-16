@@ -29,6 +29,29 @@ def query_sensor_data(fields, range_minutes=60):
     result["time"] = pd.to_datetime(result["time"])
     return result
 
+# Consulta de datos UV
+
+def query_uv_data(range_minutes=60):
+    client = InfluxDBClient(url=INFLUX_URL, token=INFLUX_TOKEN, org=ORG)
+    query_api = client.query_api()
+
+    query = f'''
+    from(bucket: "homeiot")
+      |> range(start: -{range_minutes}m)
+      |> filter(fn: (r) => r._measurement == "uv_sensor")
+      |> filter(fn: (r) => r._field == "uv_index" or r._field == "uv_raw")
+      |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+      |> sort(columns: ["_time"])
+    '''
+
+    result = query_api.query_data_frame(query)
+    if result.empty:
+        return pd.DataFrame()
+
+    result = result.rename(columns={"_time": "time"})
+    result["time"] = pd.to_datetime(result["time"])
+    return result
+
 # Configuración de la app
 st.set_page_config(page_title="Monitoreo Ambiental", layout="wide")
 st.title("Monitoreo Ambiental en Tiempo Real")
@@ -37,8 +60,9 @@ st.title("Monitoreo Ambiental en Tiempo Real")
 range_minutes = st.slider("Selecciona el rango de tiempo (en minutos):", 10, 180, 60)
 
 # Consultar datos
-fields = ["temperature", "humidity", "uv_index"]
+fields = ["temperature", "humidity"]
 data_df = query_sensor_data(fields, range_minutes)
+uv_df = query_uv_data(range_minutes)
 
 # Visualización
 col1, col2, col3 = st.columns(3)
@@ -59,9 +83,7 @@ with col2:
 
 with col3:
     st.subheader("🌞 Índice UV")
-    if "uv_index" in data_df.columns and not data_df.empty:
-        st.plotly_chart(px.line(data_df, x="time", y="uv_index", title="Índice UV"), use_container_width=True)
+    if "uv_index" in uv_df.columns and not uv_df.empty:
+        st.plotly_chart(px.line(uv_df, x="time", y="uv_index", title="Índice UV"), use_container_width=True)
     else:
         st.info("Sin datos de índice UV en este rango.")
-
-
