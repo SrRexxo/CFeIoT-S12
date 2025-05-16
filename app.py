@@ -15,12 +15,13 @@ def query_accelerometer_data(range_minutes=60):
 
     query = f'''
     import "math"
-    from(bucket: "{BUCKET}")
-      |> range(start: -{range_minutes}m)
-      |> filter(fn: (r) => r["_measurement"] == "accelerometer" and r["_field"] == "ax" or r["_field"] == "ay" or r["_field"] == "az")
-      |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-      |> sort(columns: ["_time"])
-    '''
+    from(bucket: "homeiot")
+      |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+      |> filter(fn: (r) => r._measurement == "airSensor")
+      |> filter(
+          fn: (r) =>
+              r._field == "heat_index" or (r._field == "humidity" or r._field == "temperature"),
+      )
 
     result = query_api.query_data_frame(query)
     if result.empty:
