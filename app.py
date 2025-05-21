@@ -108,9 +108,9 @@ with col3:
     st.write("Datos UV crudos:")
     st.write(uv_df.head())  
     st.write("Columnas:", uv_df.columns)
-    if "uv_index" in uv_df.columns and not uv_df.empty:
-        uv_df["uv_index"] = pd.to_numeric(uv_df["uv_index"], errors="coerce")
-        uv_df = uv_df.dropna(subset=["uv_index"])
+    if "uv_raw" in uv_df.columns and not uv_df.empty:
+        uv_df["uv_raw"] = pd.to_numeric(uv_df["uv_raw"], errors="coerce")
+        uv_df = uv_df.dropna(subset=["uv_raw"])
         
         if not uv_df.empty:
             avg_uv = uv_df["uv_raw"].mean()
