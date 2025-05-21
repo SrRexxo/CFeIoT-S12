@@ -113,9 +113,9 @@ with col3:
         uv_df = uv_df.dropna(subset=["uv_index"])
         
         if not uv_df.empty:
-            avg_uv = uv_df["uv_index"].mean()
-            max_uv = uv_df["uv_index"].max()
-            min_uv = uv_df["uv_index"].min()
+            avg_uv = uv_df["uv_raw"].mean()
+            max_uv = uv_df["uv_raw"].max()
+            min_uv = uv_df["uv_raw"].min()
             st.write(f"Promedio: {avg_uv:.2f}")
             st.write(f"Máximo: {max_uv:.2f}")
             st.write(f"Mínimo: {min_uv:.2f}")
@@ -124,7 +124,7 @@ with col3:
 
                 st.plotly_chart(
 
-                px.line(uv_df, x="time", y="uv_index", title="Índice UV"),
+                px.line(uv_df, x="time", y="uv_raw", title="Índice UV"),
 
                 use_container_width=True
 
