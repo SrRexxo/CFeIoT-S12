@@ -122,7 +122,7 @@ with col3:
             #st.plotly_chart(px.line(uv_df, x="time", y="uv_raw", title="Índice UV"), use_container_width=True)
             if len(uv_df) > 1:
 
-            st.plotly_chart(
+                st.plotly_chart(
 
                 px.line(uv_df, x="time", y="uv_index", title="Índice UV"),
 
