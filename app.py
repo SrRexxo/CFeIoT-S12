@@ -146,8 +146,8 @@ if "humidity" in data_df.columns and not data_df.empty:
     else:
         st.info("La humedad es moderada. Monitorea para mantenerla estable.")
 
-if "uv_index" in uv_df.columns and not uv_df.empty:
-    last_uv = uv_df["uv_index"].iloc[-1]
+if "uv_raw" in uv_df.columns and not uv_df.empty:
+    last_uv = uv_df["uv_raw"].iloc[-1]
     if last_uv > 8:
         st.error("La radiación UV es alta. Se recomienda proteger los cultivos con sombra o cobertores.")
     elif last_uv > 5:
