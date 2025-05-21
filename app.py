@@ -56,7 +56,7 @@ st.set_page_config(page_title="Monitoreo Ambiental", layout="wide")
 st.title("Monitoreo Ambiental en Tiempo Real")
 
 # Selector de tiempo
-range_minutes = st.slider("Selecciona el rango de tiempo (en minutos):", 10, 360, 180)
+range_minutes = st.slider("Selecciona el rango de tiempo (en minutos):", 10, 180, 60)
 
 # Consultar datos
 fields = ["temperature", "humidity"]
